@@ -1,0 +1,2 @@
+# Custom labels to translate (one API name per line)
+Greeting

@@ -1,0 +1,15 @@
+# Python bytecode
+**/__pycache__/
+**/*.pyc
+
+# Virtual environment
+python/.venv/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Data and output files
+**/*.csv
+**/*.xml
+**/*.xlsx
