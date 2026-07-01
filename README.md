@@ -71,11 +71,11 @@ pattern, merges the output into a single CSV, and deduplicates rows that are ide
 groups.
 
 ```bash
-# Object permissions for all AC_EMEA_* groups
-python3 scripts/python/psg2csv_collect.py 'AC_EMEA_*'
+# Object permissions for all MyPSG* groups
+python3 scripts/python/psg2csv_collect.py 'MyPSG*'
 
 # Field permissions
-python3 scripts/python/psg2csv_collect.py 'AC_EMEA_*' -r fieldPermissions -o ac_fields.csv
+python3 scripts/python/psg2csv_collect.py 'MyPSG*' -r fieldPermissions -o ac_fields.csv
 ```
 
 Requires the [Sunny Day CLI plugin](https://www.npmjs.com/package/@chasd00/sunny-day):
