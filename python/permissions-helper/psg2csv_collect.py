@@ -110,6 +110,11 @@ def main() -> None:
         help="Exclude rows whose 'readable' column is not TRUE (fieldPermissions only; "
         "ignored for permission types without a 'readable' column).",
     )
+    parser.add_argument(
+        "--keep-duplicates",
+        action="store_true",
+        help="Skip deduplication and write all rows, including exact duplicates across PSGs.",
+    )
     args = parser.parse_args()
 
     psg_dir = find_psg_dir(args.projectdir)
@@ -166,6 +171,18 @@ def main() -> None:
                 "flag ignored.",
                 file=sys.stderr,
             )
+
+    if args.keep_duplicates:
+        final_rows = [row for row in rows if row]
+        with open(args.output, "w", newline="", encoding="utf-8") as fh:
+            writer = csv.writer(fh)
+            writer.writerow(header)
+            writer.writerows(final_rows)
+        print(
+            f"Wrote {len(final_rows)} row(s) to {args.output} (deduplication skipped).",
+            file=sys.stderr,
+        )
+        return
 
     # De-duplicate while preserving distinct permission combinations. Two rows are
     # considered duplicates only when every column except PSG matches, so the same
