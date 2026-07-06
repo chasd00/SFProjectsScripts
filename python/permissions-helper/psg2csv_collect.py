@@ -10,10 +10,10 @@ This reads local project metadata only -- it never deploys to the org.
 
 Examples:
   # All AC_EMEA permission set groups, object permissions, default output file
-  python3 scripts/python/psg2csv_collect.py 'AC_EMEA_*'
+  python3 scripts/python/permissions-helper/psg2csv_collect.py 'AC_EMEA_*'
 
   # Everything matching *Sales*, field permissions, custom output file
-  python3 scripts/python/psg2csv_collect.py '*Sales*' -r fieldPermissions -o sales_fields.csv
+  python3 scripts/python/permissions-helper/psg2csv_collect.py '*Sales*' -r fieldPermissions -o sales_fields.csv
 """
 
 from __future__ import annotations

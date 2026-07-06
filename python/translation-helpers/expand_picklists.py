@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Expand picklist fields in a psg2csv field-permissions CSV into one row per value.
 
-Reads a combined field-permissions CSV (see psg2csv_collect.py, run with
+Reads a combined field-permissions CSV (see permissions-helper/psg2csv_collect.py, run with
 `-r fieldPermissions`) whose Name column holds `Object.Field` entries. For each row it
 looks up the field's metadata under force-app/main/default/objects/<Object>/fields/. If
 the field is a Picklist or MultiselectPicklist, the row is expanded into one row per
@@ -217,8 +217,8 @@ def main() -> None:
     parser.add_argument(
         "input_file",
         metavar="FILE",
-        help="The field-permissions CSV to process (from psg2csv_collect.py run with "
-        "-r fieldPermissions). Its Name column must hold Object.Field entries.",
+        help="The field-permissions CSV to process (from permissions-helper/psg2csv_collect.py "
+        "run with -r fieldPermissions). Its Name column must hold Object.Field entries.",
     )
     parser.add_argument(
         "-o",

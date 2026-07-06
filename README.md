@@ -15,7 +15,7 @@ git clone <url> scripts
 ```
 scripts/
 ├── python/
-│   ├── psg2csv_collect.py          — permission analysis (see below)
+│   ├── permissions-helper/         — permission analysis (see below)
 │   └── translation-helpers/        — translation workflow tools
 ├── apex/
 └── soql/
@@ -64,7 +64,7 @@ step-by-step walkthrough, prerequisites, and all command options.
 
 ---
 
-## `python/psg2csv_collect.py` — Permission Set Group analysis
+## `python/permissions-helper/` — Permission Set Group analysis
 
 Runs `sf sday psg2csv` across every Permission Set Group whose name matches a shell-style
 pattern, merges the output into a single CSV, and deduplicates rows that are identical across
@@ -72,10 +72,10 @@ groups.
 
 ```bash
 # Object permissions for all MyPSG* groups
-python3 scripts/python/psg2csv_collect.py 'MyPSG*'
+python3 scripts/python/permissions-helper/psg2csv_collect.py 'MyPSG*'
 
 # Field permissions
-python3 scripts/python/psg2csv_collect.py 'MyPSG*' -r fieldPermissions -o ac_fields.csv
+python3 scripts/python/permissions-helper/psg2csv_collect.py 'MyPSG*' -r fieldPermissions -o ac_fields.csv
 ```
 
 Requires the [Sunny Day CLI plugin](https://www.npmjs.com/package/@chasd00/sunny-day):

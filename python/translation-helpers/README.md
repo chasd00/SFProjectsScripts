@@ -15,6 +15,57 @@ command to turn the completed spreadsheet into Salesforce files.
 
 ---
 
+## Quick start
+
+> **Prerequisites:** see [One-time setup](#one-time-setup) if this is your first time running
+> these tools.
+
+### 1 — Generate your field list from Permission Set Groups
+
+```bash
+python3 scripts/python/permissions-helper/psg2csv_collect.py 'MyPSGs*' -r fieldPermissions -o mypsgs_fields.csv --readable-only
+```
+
+Change `'MyPSGs*'` to the pattern that matches your Permission Set Group names (`'*'` for all
+groups). This writes `mypsgs_fields.csv` — the field list the translation tools read.
+
+### 2 — Retrieve all metadata and build the translation CSV
+
+```bash
+python3 scripts/python/translation-helpers/gen_translationfile_e2e.py mypsgs_fields.csv es --target-org <your-org>
+```
+
+This single command runs all six preparation steps in sequence: generates the retrieve
+manifests, downloads the org metadata and layouts, builds the standard-labels cache, and
+writes `translations_es.csv` with any existing Spanish translations already pre-filled.
+Progress is printed step by step with timestamps and elapsed times as it runs.
+
+Change `es` to any Salesforce language code (`de`, `fr`, `pt_BR`, …), or pass several
+comma-separated to get one file per language: `es,de,fr`.
+
+### 3 — Send the CSV to your translator
+
+Hand `translations_es.csv` to your translator. They fill in the **`translation` column only**.
+
+### 4 — Turn the completed CSV into deployable files
+
+```bash
+python3 scripts/python/translation-helpers/translation_roundtrip.py to-files translations_es.csv --dir out_es
+```
+
+### 5 — Deploy (your normal process)
+
+```bash
+sf project deploy start -d out_es -o <your-org>
+```
+
+This is the only step that changes the org — and it is yours to run, not part of these tools.
+
+For all options (custom labels, multiple languages, include-unchanged standard fields, etc.)
+see the [full guide](#how-to-translate-fields-the-main-task) below.
+
+---
+
 ## What these tools do for you
 
 Salesforce stores translatable text (field labels, picklist values, record type names,
@@ -342,7 +393,7 @@ Sunny Day plugin (see [One-time setup](#one-time-setup)).
 
 ```bash
 # 1. Collect field permissions for the Permission Set Groups whose names match a pattern
-python3 scripts/python/psg2csv_collect.py 'AC_*' -r fieldPermissions -o ac_fields.csv
+python3 scripts/python/permissions-helper/psg2csv_collect.py 'AC_*' -r fieldPermissions -o ac_fields.csv
 #    'AC_*' matches names starting with AC_; use '*' for all.
 #    -r can be fieldPermissions, objectPermissions, or userPermissions.
 
@@ -364,7 +415,7 @@ Only these read from the org (they still never deploy):
 - `gen_manifest.py` and `sf project retrieve start ...` (Step 2, and the layout download)
 - `to-csv ... --retrieve-existing` (the optional pre-fill)
 - `gen_layout_list.py`, `gen_standard_picklists.py`, `gen_standard_labels.py`,
-  `psg2csv_collect.py`
+  `permissions-helper/psg2csv_collect.py`
 
 Everything else works entirely from the files already on your computer.
 
@@ -377,6 +428,7 @@ yours to run, not part of these tools.
 
 | Command | What it does |
 |---|---|
+| `gen_translationfile_e2e.py <fields.csv> <lang> --target-org <your-org>` | **End-to-end:** runs all six preparation steps and writes the translation CSV, pre-filled with existing translations and standard fields filtered to your input. |
 | `gen_manifest.py <fields.csv> --target-org <your-org>` | Generate `manifest/package.xml` for your field list (Step 2). |
 | `sf project retrieve start -x manifest/package.xml -o <your-org>` | Download the org setup the tools need (Step 2). |
 | `translation_roundtrip.py to-csv <fields.csv> <lang> -o <out.csv>` | Build the translation spreadsheet (Step 3). Add `--retrieve-existing --target-org <org>` to pre-fill known translations; `--labels-list <file>` to include Custom Labels. |
@@ -385,7 +437,7 @@ yours to run, not part of these tools.
 | `gen_standard_labels.py <fields.csv> --target-org <your-org>` | Build a cache used by `--filter-standard-fields-to-input` and `--include-unchanged-standard-fields`. |
 | `gen_standard_picklists.py <fields.csv> --target-org <your-org>` | Cache standard picklist values (for permission analysis). |
 | `expand_picklists.py <fields.csv> -o <out.csv>` | Expand picklist fields to one row per value (permission analysis). |
-| `psg2csv_collect.py '<pattern>' -r fieldPermissions -o <out.csv>` | Build a field list from Permission Set Groups. |
+| `permissions-helper/psg2csv_collect.py '<pattern>' -r fieldPermissions -o <out.csv>` | Build a field list from Permission Set Groups. |
 
 Every command has built-in help — add `--help`, for example:
 
